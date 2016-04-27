@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+ <head>
+    <style>
+
+    </style>
+  </head> 
+
+  <body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+<h2>Find your cool shit on this map </h2>
+ <input class="postcode" id="Postcode" name="Postcode" type="text" value="New York, NY">
+    <input type="submit" id="findbutton" value="Find" /></p>
+    <div id="map" style="width:500px; height:500px"></div><br>
+     <input type="text" id="latitude" placeholder="latitude">
+    <!-- <input type="text" id="longitude" placeholder="longitude">
+
+<!--<div id="map"></div> -->
+    <script type="text/javascript">
+   var geocoder = new google.maps.Geocoder();
+var marker = null;
+var map = null;
+function initialize() {
+      var $latitude = document.getElementById('latitude');
+      var $longitude = document.getElementById('longitude');
+      var latitude = 45.3799181
+      var longitude = -78.8838999;
+      var zoom = 7;
+
+      var LatLng = new google.maps.LatLng(latitude, longitude);
+
+      var mapOptions = {
+        zoom: zoom,
+        center: LatLng,
+        panControl: false,
+        zoomControl: false,
+        scaleControl: true,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      }
+
+      map = new google.maps.Map(document.getElementById('map'), mapOptions);
+      if (marker && marker.getMap) marker.setMap(map);
+      marker = new google.maps.Marker({
+        position: LatLng,
+        map: map,
+        title: 'Drag Me!',
+        draggable: true
+      });
+
+      google.maps.event.addListener(marker, 'dragend', function(marker) {
+        var latLng = marker.latLng;
+        $latitude.value = latLng.lat();
+        $longitude.value = latLng.lng();
+      });
+
+    }
+    initialize();
+    $('#findbutton').click(function (e) {
+        var address = $("#Postcode").val();
+        geocoder.geocode({ 'address': address }, function (results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                map.setCenter(results[0].geometry.location);
+                marker.setPosition(results[0].geometry.location);
+                $(latitude).val(marker.getPosition().lat());
+                $(longitude).val(marker.getPosition().lng());
+            } else {
+                alert("Geocode was not successful for the following reason: " + status);
+            }
+        });
+        e.preventDefault();
+    });
+    </script>
+
+
+
+
+
+  </body>
+</html>
+
+

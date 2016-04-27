@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      #map {
+        width: 500px;
+        height: 400px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      function initMap() {
+        var mapDiv = document.getElementById('map');
+        var map = new google.maps.Map(mapDiv, {
+          center: {lat: 43.640380, lng: -79.453644},
+          zoom: 7
+        });
+//Pulls in the Fusion table layer
+
+        var layer = new google.maps.FusionTablesLayer({
+          query: {
+            select: 'Location',
+            from: '1Ci8Eq8Ln2B9H64yha5mICkSAVSsXSjAI2lPDFQ3N'
+          }
+        });
+        layer.setMap(map);
+      }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAoU2D4lziYvqGs7clhjfYeUqh1KEe04W0&callback=initMap"
+  type="text/javascript"></script>
+  </body>
+</html>
