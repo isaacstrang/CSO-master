@@ -1,83 +1,118 @@
 <!DOCTYPE html>
 <html>
 
- <head>
-    <style>
+<head>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
-    </style>
-  </head> 
 
-  <body>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
-<h2>Find your cool shit on this map </h2>
- <input class="postcode" id="Postcode" name="Postcode" type="text" value="New York, NY">
-    <input type="submit" id="findbutton" value="Find" /></p>
-    <div id="map" style="width:500px; height:500px"></div><br>
-     <input type="text" id="latitude" placeholder="latitude">
-    <!-- <input type="text" id="longitude" placeholder="longitude">
+   <style>
+    #latitude {
+      display: none;
+    }
+
+     #longitude {
+      display: none;
+    }
+ 
+    input[type=text] {
+    border: none;
+    border-bottom: 2px solid black ;
+    width: 20%;
+    }
+
+   </style>
+</head> 
+
+<body>
+  <center>
+  <h2>Find your cool shit on this map </h2>
+  <input class="postcode" id="Postcode" name="Postcode" type="text" value="New York, NY">
+  <input type="submit" id="findbutton" value="Find" /></p>
+  <div id="map" style="width:500px; height:500px"></div><br>
+  <!-- Latitude and longitude have been hidden in CSS -->
+  <input type="text" id="latitude" placeholder="latitude">
+  <input type="text" id="longitude" placeholder="longitude"> 
+  <input type="text" id="latlong" placeholder="latlong!"> 
+
+  </center>
+
+   <!-- image upload see http://cloudinary.com/documentation/upload_images#upload_widget
+   <script src="http://widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+<script type="text/javascript">  
+    cloudinary.openUploadWidget({ cloud_name: 'demo', upload_preset: 'a5vxnzbp'}, 
+        function(error, result) { console.log(error, result) });
+</script>
+-->
 
 <!--<div id="map"></div> -->
-    <script type="text/javascript">
-   var geocoder = new google.maps.Geocoder();
-var marker = null;
-var map = null;
-function initialize() {
-      var $latitude = document.getElementById('latitude');
-      var $longitude = document.getElementById('longitude');
-      var latitude = 45.3799181
-      var longitude = -78.8838999;
-      var zoom = 7;
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<script type="text/javascript">
+ var geocoder = new google.maps.Geocoder();
+ var marker = null;
+ var map = null;
+ function initialize() {
+  var $latitude = document.getElementById('latitude');
+  var $longitude = document.getElementById('longitude');
+  var latitude = 45.3799181
+  var longitude = -78.8838999;
+  var zoom = 7;
 
-      var LatLng = new google.maps.LatLng(latitude, longitude);
+  var LatLng = new google.maps.LatLng(latitude, longitude);
 
-      var mapOptions = {
-        zoom: zoom,
-        center: LatLng,
-        panControl: false,
-        zoomControl: false,
-        scaleControl: true,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-      }
+  var mapOptions = {
+    zoom: zoom,
+    center: LatLng,
+    panControl: false,
+    zoomControl: false,
+    scaleControl: true,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  }
 
-      map = new google.maps.Map(document.getElementById('map'), mapOptions);
-      if (marker && marker.getMap) marker.setMap(map);
-      marker = new google.maps.Marker({
-        position: LatLng,
-        map: map,
-        title: 'Drag Me!',
-        draggable: true
-      });
 
-      google.maps.event.addListener(marker, 'dragend', function(marker) {
-        var latLng = marker.latLng;
-        $latitude.value = latLng.lat();
-        $longitude.value = latLng.lng();
-      });
+  map = new google.maps.Map(document.getElementById('map'), mapOptions);
+  if (marker && marker.getMap) marker.setMap(map);
+  marker = new google.maps.Marker({
+    position: LatLng,
+    map: map,
+    title: 'Drag Me!',
+    draggable: true
+  });
+// section immediately below defines lat and long
+google.maps.event.addListener(marker, 'dragend', function(marker) {
+  var latLng = marker.latLng;
+  $latitude.value = latLng.lat();
+  $longitude.value = latLng.lng();
+  $("#latlong").val($latitude.value + "," + $longitude.value);
+       // $latlong.value = google.maps.LatLng(latitude, longitude);
+     });
 
+}
+initialize();
+$('#findbutton').click(function (e) {
+  var address = $("#Postcode").val();
+  geocoder.geocode({ 'address': address }, function (results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      map.setCenter(results[0].geometry.location);
+      marker.setPosition(results[0].geometry.location);
+      $(latitude).val(marker.getPosition().lat());
+      $(longitude).val(marker.getPosition().lng());
+
+    } else {
+      alert("Geocode was not successful for the following reason: " + status);
     }
-    initialize();
-    $('#findbutton').click(function (e) {
-        var address = $("#Postcode").val();
-        geocoder.geocode({ 'address': address }, function (results, status) {
-            if (status == google.maps.GeocoderStatus.OK) {
-                map.setCenter(results[0].geometry.location);
-                marker.setPosition(results[0].geometry.location);
-                $(latitude).val(marker.getPosition().lat());
-                $(longitude).val(marker.getPosition().lng());
-            } else {
-                alert("Geocode was not successful for the following reason: " + status);
-            }
-        });
-        e.preventDefault();
-    });
-    </script>
+  });
+  e.preventDefault();
+});
+</script>
 
 
 
 
-
-  </body>
+</body>
 </html>
 
 
